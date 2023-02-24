@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import FastAPI, Depends, HTTPException, status
 from pydantic import BaseModel
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 import uvicorn
@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 from jose import jwt, JWTError
 
 
-router = APIRouter()
+app = FastAPI()
 oauth2 = OAuth2PasswordBearer(tokenUrl="login")
 ALGORITHM = "HS256"
 crypt = CryptContext(schemes=["bcrypt"])
@@ -77,7 +77,7 @@ async def current_user(user: User = Depends(auth_user)):
             detail="Usuario inactivo")
     return user
 
-@router.post("/login")
+@app.post("/login")
 async def login(form: OAuth2PasswordRequestForm = Depends()):
     user_db = users_db.get(form.username)
     if not user_db:
@@ -95,10 +95,14 @@ async def login(form: OAuth2PasswordRequestForm = Depends()):
     return { "access_token": jwt.encode(access_token, SECRET, algorithm=ALGORITHM), "token_type": "bearer"}
        
 
-@router.get("/users/me")
+@app.get("/users/me")
 async def me(user: User = Depends(current_user)):
     return user
 
+
+if __name__ == "__main__":
+    # uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run("__main__:app", host="0.0.0.0", port=8000, reload=True, workers=1)
 
 # 1: POST http://127.0.0.1:8000/login Body Form username: mauri1 password:123
 # 2: copy access_token from response y the next request
