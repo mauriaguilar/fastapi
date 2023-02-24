@@ -1,0 +1,11 @@
+# API MODULE
+fastapi
+# SERVER
+uvicorn
+# BASE MODEL
+pydantic
+# ROUTER
+python-multipart
+# JWT
+python-jose
+passlib
