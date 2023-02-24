@@ -43,8 +43,6 @@ def search_user(username: str):
 async def current_user(token: str = Depends(oauth2)):
     user = search_user(token)
     
-    with open("info.txt", "w+", encoding="utf-8")  as file:
-        file.write(str(oauth2))
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, 
